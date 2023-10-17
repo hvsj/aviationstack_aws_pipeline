@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM Template contains Lambda Layers for CDK
+
+Resources:
+
+  # Lambda Layer
+  DependenciesLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: 3rdParty-DependenciesLayer
+      Description: This layer contains packages like - request, pandas, snowflake-python-connector
+      ContentUri: ./src/lambda_layers/dependencies/
+      CompatibleRuntimes:
+        - python3.10
+      RetentionPolicy: Retain
+    Metadata:
+      PackageType: Zip
+      BuildArchitecture: x86_64
+      BuildMethod: python3.10
+
+  # Lambda Layer
+  UtilLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: User-Defined_Modules
+      Description: This layer contains user defined modules
+      ContentUri: ./src/lambda_layers/util_layer/
+      CompatibleRuntimes:
+        - python3.10
+      RetentionPolicy: Retain
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  DependenciesLambdaLayerARN:
+    Description: "3rdParty-DependenciesLayer Lambda Layer ARN"
+    Value: !GetAtt DependenciesLambdaLayer.Arn
+
+  UtilLambdaLayerARN:
+    Description: "User-Defined_Modules Lambda Layer ARN"
+    Value: !GetAtt UtilLambdaLayer.Arn
